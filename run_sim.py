@@ -33,8 +33,8 @@ def main():
     n = int(flight_duration() * RATE_HZ)
     for i in range(n):
         t = i / RATE_HZ
-        alt, pres, temp = read_sensors(t, rng)
-        raw = build_packet(i, int(t * 1000), alt, pres, temp)     # VERİCİ
+        alt, pres, temp, batt = read_sensors(t, rng)
+        raw = build_packet(i, int(t * 1000), alt, pres, temp, batt)   # VERİCİ
         sent += 1
 
         rx = channel.transmit(raw)                                # RADYO
@@ -51,14 +51,15 @@ def main():
         prev_seq = p["seq"]
         rows.append(p)
 
+    fields = ["seq", "time_ms", "altitude", "pressure", "temperature", "battery"]
     with open(out / "telemetry.csv", "w", newline="") as f:
-        w = csv.DictWriter(f, fieldnames=["seq", "time_ms", "altitude", "pressure", "temperature"])
+        w = csv.DictWriter(f, fieldnames=fields)
         w.writeheader(); w.writerows(rows)
 
     t_s = [r["time_ms"] / 1000 for r in rows]
-    fig, ax = plt.subplots(3, 1, sharex=True, figsize=(8, 7))
-    for axis, key, label in zip(ax, ["altitude", "pressure", "temperature"],
-                                ["İrtifa (m)", "Basınç (hPa)", "Sıcaklık (°C)"]):
+    fig, ax = plt.subplots(4, 1, sharex=True, figsize=(8, 9))
+    for axis, key, label in zip(ax, ["altitude", "pressure", "temperature", "battery"],
+                                ["İrtifa (m)", "Basınç (hPa)", "Sıcaklık (°C)", "Pil (V)"]):
         axis.plot(t_s, [r[key] for r in rows], ".", markersize=2)
         axis.set_ylabel(label); axis.grid(True)
     ax[-1].set_xlabel("Zaman (s)")
@@ -72,6 +73,7 @@ def main():
     print(f"Sayaç boşluğu (kayıp + CRC ile atılan): {lost}")
     print(f"Toplam başarısız  : {sent - ok}  (%{100 * (sent - ok) / sent:.1f})")
     print(f"Maks. irtifa (alınan veride): {max(r['altitude'] for r in rows):.0f} m")
+    print(f"Pil voltajı (ilk -> son alınan): {rows[0]['battery']:.2f} V -> {rows[-1]['battery']:.2f} V")
 
 
 if __name__ == "__main__":

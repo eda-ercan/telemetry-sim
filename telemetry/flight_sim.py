@@ -4,6 +4,7 @@ import random
 APOGEE_M = 3000.0
 BURN_S = 25.0
 DESCENT_MS = 20.0   # paraşütle iniş hızı (m/s), basitleştirilmiş
+BATTERY_START_V = 8.4   # 2 hücreli LiPo, tam dolu
 
 
 def altitude_at(t: float) -> float:
@@ -20,4 +21,5 @@ def read_sensors(t: float, rng: random.Random):
     alt = altitude_at(t) + rng.gauss(0, 1.5)             # sensör gürültüsü
     pressure = 1013.25 * (1 - alt / 44330.0) ** 5.255    # barometrik formül (hPa)
     temp = 20.0 - 0.0065 * alt + rng.gauss(0, 0.1)
-    return alt, pressure, temp
+    battery = BATTERY_START_V - 0.002 * t + rng.gauss(0, 0.01)   # yavaşça boşalır
+    return alt, pressure, temp, battery

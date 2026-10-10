@@ -16,7 +16,7 @@ Roketten yer istasyonuna giden telemetri zincirinin yazılım tarafını simüle
 
 Gereksinim: Python 3.9+, `matplotlib`. Çıktılar `out/` klasöründe.
 
-## Paket formatı (22 byte, little-endian)
+## Paket formatı (26 byte, little-endian)
 
 | Byte  | Alan     | Tip     | Açıklama                         |
 |-------|----------|---------|----------------------------------|
@@ -26,16 +26,18 @@ Gereksinim: Python 3.9+, `matplotlib`. Çıktılar `out/` klasöründe.
 | 8-11  | altitude | float32 | m                                |
 | 12-15 | pressure | float32 | hPa                              |
 | 16-19 | temp     | float32 | °C                               |
-| 20-21 | crc16    | uint16  | CRC-16/CCITT-FALSE (ilk 20 byte) |
+| 20-23 | battery  | float32 | V (pil voltajı)                  |
+| 24-25 | crc16    | uint16  | CRC-16/CCITT-FALSE (ilk 24 byte) |
 
 ## Sonuç örneği
 
 Varsayılan ayarlar: %10 kayıp, %5 bozulma, seed 42.
 
 - Gönderilen paket: 1750
-- Doğru alınan: 1504
-- CRC ile atılan: 76
-- Toplam başarısız: 246 (%14.1)
+- Doğru alınan: 1511
+- CRC ile atılan: 74
+- Toplam başarısız: 239 (%13.7)
+- Pil voltajı (ilk -> son alınan paket): 8.38 V -> 8.06 V
 
 ## Kapsam ve sınırlar
 
