@@ -37,6 +37,7 @@ Varsayılan ayarlar: %10 kayıp, %5 bozulma, seed 42.
 - Doğru alınan: 1511
 - CRC ile atılan: 74
 - Toplam başarısız: 239 (%13.7)
+- Yer istasyonunun sadece sayaçlardan tahmini: %13.6 (baştaki ve sondaki kayıplar sayaçla görünmez)
 - Pil voltajı (ilk -> son alınan paket): 8.38 V -> 8.06 V
 
 ## Kapsam ve sınırlar
